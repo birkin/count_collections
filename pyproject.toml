@@ -1,0 +1,12 @@
+[project]
+name = 'count-collections'
+version = '0.0.0'
+description = 'Counts collections.'
+readme = 'README.md'
+requires-python = '>=3.12,<3.13'
+dependencies = []
+
+[dependency-groups]
+local = []
+staging = []
+prod = []
