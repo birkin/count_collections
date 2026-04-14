@@ -1,12 +1,34 @@
 import argparse
+import logging
+import os
+import pprint
 import sys
 
 import httpx
 
-
 DEFAULT_API_URL = 'https://repository.library.brown.edu/api/search/'
 DEFAULT_QUERY = 'object_type:bdr-collection'
 DEFAULT_TIMEOUT_SECONDS = 30.0
+
+## basic logging ---------------------------------------------------
+
+"""
+From a `main.py` file, somewhere near the top.
+- Shows the logging `format` I really like.
+- Shows a clean way to default the log-level to INFO if LOG_LEVEL is not `DEBUG`.
+- Shows optional file-logging.
+"""
+
+# log_dir: Path = stuff_dir / 'logs'
+# log_dir.mkdir(parents=True, exist_ok=True)  # creates the log-directory inside the stuff-directory if it doesn't exist
+# log_file_path: Path = log_dir / 'auto_updater.log'
+logging.basicConfig(
+    level=logging.DEBUG if os.getenv('LOG_LEVEL') == 'DEBUG' else logging.INFO,
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S',
+    # filename=log_file_path,
+)
+log = logging.getLogger(__name__)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -41,6 +63,8 @@ def fetch_collection_count(api_url: str, query: str, timeout: float) -> int:
 
     Called by: main()
     """
+    log.debug(f'Fetching collection count from ``{api_url}`` with query ``{query}``')
+
     params = {
         'q': query,
         'rows': 0,
@@ -55,6 +79,7 @@ def fetch_collection_count(api_url: str, query: str, timeout: float) -> int:
     response_data = payload.get('response')
     if not isinstance(response_data, dict):
         raise ValueError('API response is missing a top-level "response" object.')
+    log.debug(f'response, ``{pprint.pformat(response_data)}``')
 
     num_found = response_data.get('numFound')
     if not isinstance(num_found, int):
