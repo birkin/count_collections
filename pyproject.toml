@@ -4,7 +4,9 @@ version = '0.0.0'
 description = 'Counts collections.'
 readme = 'README.md'
 requires-python = '>=3.12,<3.13'
-dependencies = []
+dependencies = [
+    'httpx~=0.28.0',
+]
 
 [dependency-groups]
 local = []
